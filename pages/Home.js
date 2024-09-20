@@ -4,7 +4,7 @@ import AboutUsSection from './components/about-us-section/AboutUsSection';
 import HeroHeaderSection from './components/HomeComponents/HeroHeaderSection';
 import SliderSection from './components/HomeComponents/SliderSection';
 
-export default function Home() {
+export default function Home({ navigation }) { 
   return (
     <SafeAreaView>
     <ScrollView>

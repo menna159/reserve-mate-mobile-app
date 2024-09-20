@@ -5,6 +5,7 @@ const Tab = createBottomTabNavigator();
 import { Ionicons } from '@expo/vector-icons';
 import AboutUsPage from '../About us/aboutus';
 import { styles } from './BottomNavigation.module';
+import HotelsPage from '../../HotelsPage';
 function MyTabs() {
   return (
     <Tab.Navigator initialRouteName={routes.home} screenOptions={{headerShown:false,
@@ -22,7 +23,7 @@ function MyTabs() {
       ),
       tabBarActiveTintColor:"#dfa974"
     }}/>
-      <Tab.Screen name={routes.hotels} component={Home} 
+      <Tab.Screen name={routes.hotelsPage} component={HotelsPage} 
       options={{
       tabBarLabel: 'Hotels',
       tabBarIcon: ({ color,size }) => (

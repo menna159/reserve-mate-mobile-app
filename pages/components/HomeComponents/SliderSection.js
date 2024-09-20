@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { routes } from '../../../routes';
 import Carousel from 'react-native-reanimated-carousel';
@@ -34,7 +34,7 @@ const sliderData = [
 const SliderSection = () => {
   const navigation = useNavigation();
 
-  const showHotelsClickHandler = () => navigation.navigate(routes.login);
+  const showHotelsClickHandler = () => navigation.navigate(routes.hotelsPage);
 
   return (
     <View style={styles.container}>

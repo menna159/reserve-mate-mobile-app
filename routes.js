@@ -3,5 +3,7 @@ export const routes={
     login:"login",
     aboutUs:'AboutUs',
     contactUs:"contactUs",
-    hotels:"hotels"
+    signup: "Sign Up",
+    hotelsPage: 'HotelsPage',
+    hotelDetails: "HotelDetails"
 }
