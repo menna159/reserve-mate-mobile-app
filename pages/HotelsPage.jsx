@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // import { AuthContext } from "../AuthContext";
@@ -72,51 +73,53 @@ const HotelsPage = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Hotels</Text>
-      {hotels.map((hotel) => {
-        const truncatedText = truncateText(hotel.description, 20);
-        const isTruncated = hotel.description.split(" ").length > 20;
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Hotels</Text>
+        {hotels.map((hotel) => {
+          const truncatedText = truncateText(hotel.description, 20);
+          const isTruncated = hotel.description.split(" ").length > 20;
 
-        return (
-          <View key={hotel.id} style={styles.card}>
-            <Image source={{ uri: hotel.image }} style={styles.image} />
-            <View style={styles.cardBody}>
-              <Text style={styles.cardTitle}>{hotel.name}</Text>
-              <Text
-                numberOfLines={expanded[hotel.id] ? undefined : 3}
-                style={styles.cardText}
-              >
-                {expanded[hotel.id] ? hotel.description : truncatedText}
-              </Text>
-              {isTruncated && (
-                <TouchableOpacity onPress={() => toggleReadMore(hotel.id)}>
-                  <Text style={styles.readMore}>
-                    {expanded[hotel.id] ? "See less" : "Read more"}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              <View style={styles.buttonContainer}>
-                <Button
-                  title="More Details"
-                  color="#dfa974"
-                  onPress={() =>
-                    navigation.navigate("HotelDetails", { hotelId: hotel.id })
-                  }
-                />
-                <Button
-                  title="Reviews"
-                  color="#dfa974"
-                  onPress={() =>
-                    navigation.navigate(routes.reviews, { hotelId: hotel.id })
-                  }
-                />
+          return (
+            <View key={hotel.id} style={styles.card}>
+              <Image source={{ uri: hotel.image }} style={styles.image} />
+              <View style={styles.cardBody}>
+                <Text style={styles.cardTitle}>{hotel.name}</Text>
+                <Text
+                  numberOfLines={expanded[hotel.id] ? undefined : 3}
+                  style={styles.cardText}
+                >
+                  {expanded[hotel.id] ? hotel.description : truncatedText}
+                </Text>
+                {isTruncated && (
+                  <TouchableOpacity onPress={() => toggleReadMore(hotel.id)}>
+                    <Text style={styles.readMore}>
+                      {expanded[hotel.id] ? "See less" : "Read more"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                <View style={styles.buttonContainer}>
+                  <Button
+                    title="More Details"
+                    color="#dfa974"
+                    onPress={() =>
+                      navigation.navigate("HotelDetails", { hotelId: hotel.id })
+                    }
+                  />
+                  <Button
+                    title="Reviews"
+                    color="#dfa974"
+                    onPress={() =>
+                      navigation.navigate(routes.reviews, { hotelId: hotel.id })
+                    }
+                  />
+                </View>
               </View>
             </View>
-          </View>
-        );
-      })}
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

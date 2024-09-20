@@ -1,22 +1,17 @@
 import React from 'react';
-import { Button, View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
+import AboutUsSection from './components/about-us-section/AboutUsSection';
+import HeroHeaderSection from './components/HomeComponents/HeroHeaderSection';
+import SliderSection from './components/HomeComponents/SliderSection';
 
 export default function Home({ navigation }) { 
   return (
-    <View style={styles.container}>
-      <Text>Home</Text>
-      <Button
-        title="Go to Hotels"
-        onPress={() => navigation.navigate('HotelsPage')} 
-      />
-    </View>
+    <SafeAreaView>
+    <ScrollView>
+      <HeroHeaderSection />
+      <AboutUsSection />
+      <SliderSection />
+    </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
