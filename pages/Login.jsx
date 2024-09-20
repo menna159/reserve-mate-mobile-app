@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, TextInput, Text, Pressable, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useToast } from "react-native-toast-notifications";
+import { Toast, useToast } from "react-native-toast-notifications";
 import { useForm } from "react-hook-form";
 import { routes } from "../routes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
