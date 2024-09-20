@@ -1,9 +1,19 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Image, Button, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Button,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // import { AuthContext } from "../AuthContext";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import { routes } from "../routes";
 
 const HotelsPage = () => {
   const navigation = useNavigation();
@@ -73,7 +83,10 @@ const HotelsPage = () => {
             <Image source={{ uri: hotel.image }} style={styles.image} />
             <View style={styles.cardBody}>
               <Text style={styles.cardTitle}>{hotel.name}</Text>
-              <Text numberOfLines={expanded[hotel.id] ? undefined : 3} style={styles.cardText}>
+              <Text
+                numberOfLines={expanded[hotel.id] ? undefined : 3}
+                style={styles.cardText}
+              >
                 {expanded[hotel.id] ? hotel.description : truncatedText}
               </Text>
               {isTruncated && (
@@ -87,12 +100,16 @@ const HotelsPage = () => {
                 <Button
                   title="More Details"
                   color="#dfa974"
-                  onPress={() => navigation.navigate("HotelDetails", { hotelId: hotel.id })}
+                  onPress={() =>
+                    navigation.navigate("HotelDetails", { hotelId: hotel.id })
+                  }
                 />
                 <Button
                   title="Reviews"
                   color="#dfa974"
-                  onPress={() => navigation.navigate("HotelReviews", { hotelId: hotel.id })}
+                  onPress={() =>
+                    navigation.navigate(routes.reviews, { hotelId: hotel.id })
+                  }
                 />
               </View>
             </View>
