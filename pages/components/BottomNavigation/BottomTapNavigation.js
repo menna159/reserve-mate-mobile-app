@@ -8,7 +8,7 @@ import { styles } from './BottomNavigation.module';
 import HotelsPage from '../../HotelsPage';
 function MyTabs() {
   return (
-    <Tab.Navigator initialRouteName={routes.home} screenOptions={{headerShown:false,
+    <Tab.Navigator initialRouteName={routes.login} screenOptions={{headerShown:false,
       tabBarStyle: styles.tabBar,
       tabBarLabelStyle:{
         fontSize:10,

@@ -7,15 +7,22 @@ import Home from "./Home";
 import SignUp from "./SignUp";
 import HotelsPage from './HotelsPage';
 import HotelDetails from './HotelDetails';
+
 const Stack = createStackNavigator();
 
 export function MyStack() {
   return (
-    <Stack.Navigator >
-       <Stack.Screen name="MyTaps" component={MyTabs} options={{ headerShown:false}}/>
-      <Stack.Screen name={routes.login} component={Login} />
+    <Stack.Navigator initialRouteName={routes.login}>
+      {/* Login and Signup screens */}
+      <Stack.Screen name={routes.login} component={Login} options={{ headerShown: false }} />
       <Stack.Screen name={routes.signup} component={SignUp} />
-      <Stack.Screen name={routes.home} component={Home} />
+
+      {/* Home and other pages */}
+      <Stack.Screen 
+        name={routes.home} 
+        component={MyTabs} 
+        options={{ headerShown: false }} 
+      />
       <Stack.Screen name={routes.hotelsPage} component={HotelsPage} />
       <Stack.Screen name={routes.hotelDetails} component={HotelDetails} />
       <Stack.Screen name={routes.aboutUs} component={AboutUsPage} />
