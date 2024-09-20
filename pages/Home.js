@@ -1,12 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { SafeAreaView, ScrollView } from 'react-native';
+import AboutUsSection from './components/about-us-section/AboutUsSection';
+import HeroHeaderSection from './components/HomeComponents/HeroHeaderSection';
+import SliderSection from './components/HomeComponents/SliderSection';
 
 export default function Home() {
   return (
-    <View>
-      <Text>Home</Text>
-    </View>
-  )
+    <SafeAreaView>
+    <ScrollView>
+      <HeroHeaderSection />
+      <AboutUsSection />
+      <SliderSection />
+    </ScrollView>
+    </SafeAreaView>
+  );
 }
-
-const styles = StyleSheet.create({})
