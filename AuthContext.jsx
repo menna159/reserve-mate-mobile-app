@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(fetchUserData);
     return () => unsubscribe(); // Clean up subscription on unmount
-  }, []);
+  }, [userDetails]);
 
   const value = { userDetails, currentUser, isLoading };
 
