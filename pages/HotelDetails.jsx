@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { View, Text, Image, ScrollView, ActivityIndicator, Button } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 
 const HotelDetails = () => {
   const route = useRoute();
   const { hotelId } = route.params;
+  const navigation = useNavigation();
 
   const [hotel, setHotel] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +55,11 @@ const HotelDetails = () => {
           />
         ))}
       </ScrollView>
+
+      <Button
+        title="View Rooms" color="#dfa974" 
+        onPress={() => navigation.navigate('RoomsPage', { hotelId })} // Navigate to RoomsPage with hotelId
+      />
 
       <Text style={{ marginTop: 20, fontSize: 16 }}>✨ Facilities</Text>
       <Text>🔸 Highlights: {hotel?.Highlights?.join(', ')}</Text>

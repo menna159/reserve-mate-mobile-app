@@ -8,4 +8,5 @@ export const routes = {
   hotelDetails: "HotelDetails",
   reviews: "Reviews",
   profile: "Profile",
+  roomsPage:"RoomsPage",
 };
