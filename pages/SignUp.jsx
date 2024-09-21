@@ -226,7 +226,7 @@ const SignUp = ({ navigation }) => {
       <Pressable
         style={({ pressed }) => [
           styles.button,
-          { backgroundColor: pressed ? "#ddd" : "#2196F3" },
+          // { backgroundColor: pressed ? "#ddd" : "#2196F3" },
           isValid && !loading
             ? { pointerEvents: "auto" }
             : { pointerEvents: "none", backgroundColor: "#ccc" },
