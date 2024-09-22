@@ -9,22 +9,6 @@ import Logout from "./Logout";
 export default function Home({ navigation }) {
   return (
     <SafeAreaView>
-      {/* <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 5,
-          alignItems: "center",
-          marginTop: 5,
-        }}
-      >
-        <Button
-          title="Profile"
-          color="#dfa974"
-          onPress={() => navigation.navigate(routes.profile)}
-        />
-        <Logout />
-      </View> */}
       <ScrollView>
         <HeroHeaderSection />
         <AboutUsSection />

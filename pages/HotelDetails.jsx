@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, Button } from 'react-native';
+import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase";
@@ -35,51 +35,112 @@ const HotelDetails = () => {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#dfa974" />
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{hotel?.name}</Text>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>{hotel?.location}</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <Text style={styles.hotelName}>{hotel?.name}</Text>
+     
 
       <ScrollView horizontal>
         {hotel?.images?.map((img, index) => (
           <Image
             key={index}
             source={{ uri: img }}
-            style={{ width: 200, height: 150, marginRight: 10 }}
+            style={styles.hotelImage}
           />
         ))}
       </ScrollView>
 
-      <Button
-        title="View Rooms" color="#dfa974" 
-        onPress={() => navigation.navigate('RoomsPage', { hotelId })} // Navigate to RoomsPage with hotelId
-      />
+      <Text style={styles.hotelLocation}>{hotel?.location}</Text>
 
-      <Text style={{ marginTop: 20, fontSize: 16 }}>✨ Facilities</Text>
-      <Text>🔸 Highlights: {hotel?.Highlights?.join(', ')}</Text>
+      <TouchableOpacity
+        style={styles.viewRoomsButton}
+        onPress={() => navigation.navigate('RoomsPage', { hotelId })}>
+        <Text style={styles.buttonText}>View Rooms</Text>
+      </TouchableOpacity>
 
+      <Text style={styles.Header}>✨ Facilities</Text>
+
+      <Text style={styles.sectionHeader}>🔸 Highlights: {hotel?.Highlights?.join(', ')}</Text>
       <Text style={{ marginTop: 20 }}>🛏 Cleaning Services: {hotel?.Amenities?.['Cleaning Services']}</Text>
       <Text>🍽 Food & Drink: {hotel?.Amenities?.['Food & Drink']}</Text>
 
-      <Text style={{ marginTop: 20, fontSize: 16 }}>🚗 Transportation</Text>
+      <Text style={styles.sectionHeader}>🚗 Transportation</Text>
       {hotel?.Amenities?.['Transportation']?.map((amenity, index) => (
         <Text key={index}>🔸 {amenity}</Text>
       ))}
 
-      <Text style={{ marginTop: 20 }}>🏢 Popular Amenities:</Text>
+      <Text style={styles.sectionHeader}>🏢 Popular Amenities:</Text>
       {hotel?.Amenities?.['Popular Amenities']?.map((amenity, index) => (
         <Text key={index}>🔸 {amenity}</Text>
       ))}
 
-      <Text style={{ marginTop: 20, fontSize: 16 }}>{hotel?.description}</Text>
+      <Text style={styles.description}>{hotel?.description}</Text>
     </ScrollView>
   );
+};
+
+const { width } = Dimensions.get('window');  
+
+const styles = {
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContainer: {
+    padding: 20,
+  },
+  hotelName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',   
+    marginBottom: 18,
+  },
+  hotelLocation: {
+    fontSize: 18,
+    textAlign: 'center',   
+    marginBottom: 10,
+    marginTop: 15,
+  },
+  hotelImage: {
+    width: 200,
+    height: 190,
+    marginRight: 10,
+  },
+  viewRoomsButton: {
+    alignSelf: 'flex-end',  
+    width: width * 0.25,       
+    marginTop: 10,            
+    backgroundColor: '#dfa974', 
+    paddingVertical: 10,       
+    borderRadius: 5,           
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+
+  Header:{
+    marginTop: 15,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  sectionHeader: {
+    marginTop: 15,
+    fontSize: 20,
+  },
+  description: {
+    marginTop: 20,
+    fontSize: 16,
+  },
 };
 
 export default HotelDetails;
