@@ -4,9 +4,11 @@ import { MyStack } from "./pages/StackNavigator"; // Ensure MyStack is defined a
 import { ToastProvider } from "react-native-toast-notifications";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider } from "./AuthContext";
+import { CartProvider } from "./pages/cartContext";
 
 const App = () => {
   return (
+    <CartProvider>
     <NavigationContainer>
       <ToastProvider>
         <AuthProvider>
@@ -14,6 +16,7 @@ const App = () => {
         </AuthProvider>
       </ToastProvider>
     </NavigationContainer>
+    </CartProvider>
   );
 };
 

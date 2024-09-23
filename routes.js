@@ -1,3 +1,5 @@
+ 
+
 export const routes = {
   home: "home",
   login: "login",
@@ -9,4 +11,5 @@ export const routes = {
   reviews: "Reviews",
   profile: "Profile",
   roomsPage:"RoomsPage",
+  myBooking:'MyBooking',
 };

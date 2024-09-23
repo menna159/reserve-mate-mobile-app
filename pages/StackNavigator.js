@@ -10,6 +10,7 @@ import { routes } from "../routes";
 import Reviews from "./Reviews";
 import Profile from "./Profile";
 import RoomsPage from './RoomsPage';
+import MyBooking from "./myBooking";
 
 const Stack = createStackNavigator();
 
@@ -36,6 +37,8 @@ export function MyStack() {
       <Stack.Screen name={routes.aboutUs} component={AboutUsPage} />
       <Stack.Screen name={routes.profile} component={Profile} />
       <Stack.Screen name={routes.roomsPage} component={RoomsPage} />
+      <Stack.Screen name={routes.myBooking} component={MyBooking} />
+      
     </Stack.Navigator>
   );
 }

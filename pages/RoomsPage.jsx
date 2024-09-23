@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import React, { useEffect, useState, useContext } from 'react';
+import { View, Text, Image, ActivityIndicator, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../firebase";
+import { CartContext } from './cartContext';
+
+const ScrollableComponent = Platform.OS === 'web' ? 'div' : 'ScrollView';
 
 const RoomsPage = () => {
   const route = useRoute();
+  const navigation = useNavigation();  
   const { hotelId } = route.params;
 
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { addToCart } = useContext(CartContext);  
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -30,6 +36,11 @@ const RoomsPage = () => {
     fetchRooms();
   }, [hotelId]);
 
+  const handleBooking = (room) => {
+    addToCart(room);
+    navigation.navigate('MyBooking'); // Navigate to MyBooking page
+  };
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -39,7 +50,7 @@ const RoomsPage = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollableComponent style={styles.scrollContainer}>
       <Text style={styles.headerText}>Our Rooms</Text>
       {rooms.map((room) => (
         <View key={room.id} style={styles.roomItem}>
@@ -68,17 +79,16 @@ const RoomsPage = () => {
               <Text style={styles.roomDetail}>{room.Services}</Text>
             </View>
             
-            {/* Optional booking button */}
             <TouchableOpacity
               style={styles.bookNowButton}
-              onPress={() => console.log(`Booking room ${room.id}`)}
+              onPress={() => handleBooking(room)}  // Updated to handle booking
             >
               <Text style={styles.bookNowText}>Booking Now</Text>
             </TouchableOpacity>
           </View>
         </View>
       ))}
-    </ScrollView>
+    </ScrollableComponent>
   );
 };
 
@@ -87,9 +97,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    height: '100vh',   
   },
   scrollContainer: {
     padding: 20,
+    flexGrow: 1,
+    height: '100vh',  
+    overflowY: 'auto', 
   },
   headerText: {
     fontSize: 30,
@@ -158,6 +172,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dfa974',
     borderRadius: 4,
     alignItems: 'center',
+    marginBottom: 50,
   },
   bookNowText: {
     color: '#fff',
