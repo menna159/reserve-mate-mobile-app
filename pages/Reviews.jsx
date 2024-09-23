@@ -68,85 +68,76 @@ const Reviews = ({ route }) => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 10 }}>
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#d6a472" style={{ flex: 1 }} />
-      ) : (
-        <>
-          {error && <Text style={{ color: "red" }}>{error}</Text>}
-          <View style={styles.hotelContainer}>
-            <Image source={{ uri: hotel.image }} style={styles.image} />
-            <Text style={{ fontSize: 20, color: "black", margin: 8 }}>
-              {hotel.name}
-            </Text>
-          </View>
-          <ScrollView style={{ flex: 1 }}>
-            {reviews.length > 0 ? (
-              reviews.map(({ name, date, rating, comment }, index) => (
-                <View
-                  key={index} // Use index as the key if name is not unique
-                  style={{
-                    marginBottom: 16,
-                    borderBottomColor: "gray",
-                    borderBottomWidth: 1,
-                    paddingBottom: 8,
-                  }}
-                >
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.hotelContainer}>
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#d6a472" />
+          ) : (
+            <>
+              {error && <Text style={styles.errorText}>{error}</Text>}
+              <Image source={{ uri: hotel.image }} style={styles.image} />
+              <Text style={styles.hotelName}>{hotel.name}</Text>
+              {reviews.length > 0 ? (
+                reviews.map(({ name, date, rating, comment }, index) => (
                   <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItem: "center",
-                    }}
+                    key={index} // Use index as the key if name is not unique
+                    style={styles.reviewContainer}
                   >
-                    <Text style={{ color: "black", fontSize: 15 }}>{name}</Text>
-                    <View style={styles.dateDeleteContainer}>
-                      <Text style={{ color: "gray", fontSize: 11 }}>
-                        {date}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => handleDeleteReview(name)}
-                        style={{
-                          display:
-                            userDetails?.username === name ? "inline" : "none",
-                        }}
-                      >
-                        <Icon name="trash-o" size={15} color="#900" />
-                      </TouchableOpacity>
+                    <View style={styles.reviewHeader}>
+                      <Text style={styles.reviewName}>{name}</Text>
+                      <View style={styles.dateDeleteContainer}>
+                        <Text style={styles.reviewDate}>{date}</Text>
+                        <TouchableOpacity
+                          onPress={() => handleDeleteReview(name)}
+                          style={{
+                            display: userDetails?.username === name ? "flex" : "none",
+                          }}
+                        >
+                          <Icon name="trash-o" size={15} color="#900" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
+                    <View style={styles.ratingContainer}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Text
+                          key={star}
+                          style={{
+                            color: rating >= star ? "gold" : "gray",
+                            fontSize: 16,
+                          }}
+                        >
+                          ★
+                        </Text>
+                      ))}
+                    </View>
+                    <Text style={styles.reviewComment}>"{comment}"</Text>
                   </View>
-                  <View style={{ flexDirection: "row" }}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Text
-                        key={star}
-                        style={{
-                          color: rating >= star ? "gold" : "gray",
-                          fontSize: 16,
-                        }}
-                      >
-                        ★
-                      </Text>
-                    ))}
-                  </View>
-                  <Text style={{ color: "gray" }}>"{comment}"</Text>
-                </View>
-              ))
-            ) : (
-              <Text style={{ color: "#FFB22C" }}>No Available Reviews!</Text>
-            )}
-            <ReviewModal
-              hotelId={hotelId}
-              userDetails={userDetails}
-              handleReviewAdded={handleReviewAdded}
-            />
-          </ScrollView>
-        </>
-      )}
+                ))
+              ) : (
+                <Text style={styles.noReviewsText}>No Available Reviews!</Text>
+              )}
+              <ReviewModal
+                hotelId={hotelId}
+                userDetails={userDetails}
+                handleReviewAdded={handleReviewAdded}
+              />
+            </>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  scrollView: {
+    // Removed flexGrow to ensure proper scrolling
+  },
   hotelContainer: {
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -156,7 +147,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
-    width: "90%",
+    width: "100%",
     alignSelf: "center",
     marginBottom: 20,
   },
@@ -164,10 +155,45 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
   },
-  dateDeleteContainer: {
-    display: "flex",
+  hotelName: {
+    fontSize: 20,
+    color: "black",
+    margin: 8,
+  },
+  reviewContainer: {
+    marginBottom: 16,
+    borderBottomColor: "gray",
+    borderBottomWidth: 1,
+    paddingBottom: 8,
+  },
+  reviewHeader: {
     flexDirection: "row",
-    gap: 5,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  reviewName: {
+    color: "black",
+    fontSize: 15,
+  },
+  dateDeleteContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  reviewDate: {
+    color: "gray",
+    fontSize: 11,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+  },
+  reviewComment: {
+    color: "gray",
+  },
+  noReviewsText: {
+    color: "#FFB22C",
+  },
+  errorText: {
+    color: "red",
   },
 });
 

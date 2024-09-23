@@ -44,9 +44,8 @@ const HotelDetails = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <Text style={styles.hotelName}>{hotel?.name}</Text>
-     
 
-      <ScrollView horizontal>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {hotel?.images?.map((img, index) => (
           <Image
             key={index}
@@ -64,8 +63,7 @@ const HotelDetails = () => {
         <Text style={styles.buttonText}>View Rooms</Text>
       </TouchableOpacity>
 
-      <Text style={styles.Header}>✨ Facilities</Text>
-
+      <Text style={styles.header}>✨ Facilities</Text>
       <Text style={styles.sectionHeader}>🔸 Highlights: {hotel?.Highlights?.join(', ')}</Text>
       <Text style={{ marginTop: 20 }}>🛏 Cleaning Services: {hotel?.Amenities?.['Cleaning Services']}</Text>
       <Text>🍽 Food & Drink: {hotel?.Amenities?.['Food & Drink']}</Text>
@@ -85,7 +83,7 @@ const HotelDetails = () => {
   );
 };
 
-const { width } = Dimensions.get('window');  
+const { width } = Dimensions.get('window');
 
 const styles = {
   loadingContainer: {
@@ -95,16 +93,17 @@ const styles = {
   },
   scrollContainer: {
     padding: 20,
+    minHeight: '100%', // Ensures scrollable area fills the height
   },
   hotelName: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',   
+    textAlign: 'center',
     marginBottom: 18,
   },
   hotelLocation: {
     fontSize: 18,
-    textAlign: 'center',   
+    textAlign: 'center',
     marginBottom: 10,
     marginTop: 15,
   },
@@ -112,27 +111,26 @@ const styles = {
     width: 200,
     height: 190,
     marginRight: 10,
+    borderRadius: 10, // Optional: to give a nicer appearance
   },
   viewRoomsButton: {
-    alignSelf: 'flex-end',  
-    width: width * 0.25,       
-    marginTop: 10,            
-    backgroundColor: '#dfa974', 
-    paddingVertical: 10,       
-    borderRadius: 5,           
+    alignSelf: 'flex-end',
+    width: width * 0.25,
+    marginTop: 10,
+    backgroundColor: '#dfa974',
+    paddingVertical: 10,
+    borderRadius: 5,
   },
   buttonText: {
     color: '#fff',
     textAlign: 'center',
     fontWeight: 'bold',
   },
-
-  Header:{
+  header: {
     marginTop: 15,
     fontSize: 20,
     fontWeight: 'bold',
   },
-
   sectionHeader: {
     marginTop: 15,
     fontSize: 20,

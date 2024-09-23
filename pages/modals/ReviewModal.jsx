@@ -146,7 +146,7 @@ function ReviewModal({ hotelId, userDetails, handleReviewAdded }) {
               marginTop: 20,
             }}
           >
-            <Button title="Close" onPress={resetForm} color="#6c757d" />
+            <Button marginTop='6' title="Close" onPress={resetForm} color="#6c757d" />
             <Button
               color="#dfa974"
               title="Send Review"

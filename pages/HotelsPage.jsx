@@ -13,16 +13,19 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
+import SearchBar from "./components/search/Search";
 import { routes } from "../routes";
 
 const HotelsPage = () => {
   const navigation = useNavigation();
 
-  // States
+  
   const [hotels, setHotels] = useState([]);
-  const [loading, setLoading] = useState(true);
+   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [expanded, setExpanded] = useState({});
+   const [expanded, setExpanded] = useState({});
+   const [filteredHotels, setFilteredHotels] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -33,6 +36,7 @@ const HotelsPage = () => {
           ...doc.data(),
         }));
         setHotels(data);
+        setFilteredHotels(data);  
       } catch (error) {
         setError(error.message);
       } finally {
@@ -42,6 +46,13 @@ const HotelsPage = () => {
 
     fetchHotels();
   }, []);
+
+  useEffect(() => {
+    const results = hotels.filter(hotel =>
+      hotel.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredHotels(results);
+  }, [searchQuery, hotels]);
 
   const toggleReadMore = (id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -72,9 +83,10 @@ const HotelsPage = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Hotels</Text>
-        {hotels.map((hotel) => {
+        {filteredHotels.map((hotel) => {
           const truncatedText = truncateText(hotel.description, 20);
           const isTruncated = hotel.description.split(" ").length > 20;
 
@@ -124,13 +136,13 @@ const HotelsPage = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    justifyContent: "center", // Center content vertically
+    justifyContent: "center",
   },
   container: {
     padding: 16,
-    flexGrow: 1, // Allow the ScrollView to grow
-    justifyContent: "center", // Center content vertically
-    alignItems: "center", // Center content horizontally
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   loaderContainer: {
     flex: 1,
