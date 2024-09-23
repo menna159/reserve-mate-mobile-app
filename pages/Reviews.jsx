@@ -68,7 +68,7 @@ const Reviews = ({ route }) => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={{ flex: 1, padding: 10 }}>
       {isLoading ? (
         <ActivityIndicator size="large" color="#d6a472" style={{ flex: 1 }} />
       ) : (
@@ -96,6 +96,7 @@ const Reviews = ({ route }) => {
                     style={{
                       flexDirection: "row",
                       justifyContent: "space-between",
+                      alignItem: "center",
                     }}
                   >
                     <Text style={{ color: "black", fontSize: 15 }}>{name}</Text>

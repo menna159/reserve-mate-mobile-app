@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-// import { AuthContext } from "../AuthContext";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { routes } from "../routes";
 
@@ -24,7 +23,6 @@ const HotelsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState({});
-  // const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -73,7 +71,7 @@ const HotelsPage = () => {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Hotels</Text>
         {hotels.map((hotel) => {
@@ -124,10 +122,15 @@ const HotelsPage = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    justifyContent: "center", // Center content vertically
+  },
   container: {
     padding: 16,
-    justifyContent: "center",
-    alignItems: "center",
+    flexGrow: 1, // Allow the ScrollView to grow
+    justifyContent: "center", // Center content vertically
+    alignItems: "center", // Center content horizontally
   },
   loaderContainer: {
     flex: 1,
@@ -176,6 +179,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 16,
+    marginBottom: 10,
   },
 });
 

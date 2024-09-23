@@ -1,15 +1,13 @@
 import React from "react";
-import { Button, SafeAreaView, ScrollView, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
 import AboutUsSection from "./components/about-us-section/AboutUsSection";
 import HeroHeaderSection from "./components/HomeComponents/HeroHeaderSection";
 import SliderSection from "./components/HomeComponents/SliderSection";
-import { routes } from "../routes";
-import Logout from "./Logout";
 
 export default function Home({ navigation }) {
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <HeroHeaderSection />
         <AboutUsSection />
         <SliderSection />
@@ -17,3 +15,13 @@ export default function Home({ navigation }) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1, // Ensures the SafeAreaView takes full height
+  },
+  scrollContainer: {
+    flexGrow: 1, // Allows the ScrollView to grow
+    padding: 16, // Add padding for aesthetic
+  },
+});
