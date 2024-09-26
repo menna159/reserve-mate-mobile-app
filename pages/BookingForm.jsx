@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // Keep this line
+import { Picker } from "@react-native-picker/picker";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../firebase"; // Adjust the path as necessary
+import { db } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
-import { Calendar } from "react-native-calendars"; // Ensure this package is installed
+import { Calendar } from "react-native-calendars";
 import moment from "moment";
 
 const BookingModal = () => {
@@ -51,7 +51,7 @@ const BookingModal = () => {
 
   const handleInputChange = (field, value) => {
     if (field === "numberOfAdults" || field === "numberOfChildren") {
-      value = Math.max(0, parseInt(value) || 0); // Ensure non-negative numbers
+      value = Math.max(0, parseInt(value) || 0);
     }
     if (field === "numberOfNights") {
       setNumberOfNights(value);
@@ -70,7 +70,7 @@ const BookingModal = () => {
   const onDayPress = day => {
     if (isArrivalDate) {
       setArrivalDate(day.dateString);
-      setDepartureDate(""); // Reset departure date
+      setDepartureDate("");
     } else {
       const checkInDate = new Date(arrivalDate);
       const checkOutDate = new Date(day.dateString);
@@ -173,6 +173,7 @@ const BookingModal = () => {
       </View>
 
       <Button
+        style={styles.button}
         title="Reserve Now"
         onPress={handleReserve}
         disabled={!selectedHotel || numberOfNights < 1}
@@ -213,6 +214,17 @@ const styles = StyleSheet.create({
   summaryText: {
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  button: {
+    backgroundColor: "#dfa974",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+    marginBottom: 20,
+    elevation: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    color: "white",
   },
 });
 
