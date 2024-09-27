@@ -1,21 +1,18 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ActivityIndicator, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { db } from "../firebase";
-import { CartContext } from './cartContext';
 
 const ScrollableComponent = Platform.OS === 'web' ? 'div' : 'ScrollView';
 
 const RoomsPage = () => {
   const route = useRoute();
   const navigation = useNavigation();  
-  const { hotelId } = route.params;
+  const { hotelId, userId } = route.params;
 
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const { addToCart } = useContext(CartContext);  
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -36,9 +33,22 @@ const RoomsPage = () => {
     fetchRooms();
   }, [hotelId]);
 
-  const handleBooking = (room) => {
-    addToCart(room);
-    navigation.navigate('MyBooking'); // Navigate to MyBooking page
+  const handleBooking = async (room) => {
+    try {
+      
+      await setDoc(doc(db, `users/${userId}/bookings`, room.id), {
+        Title: room.Title,
+        Price: room.Price,
+        Size: room.Size,
+        Capacity: room.Capacity,
+        Bed: room.Bed,
+        Services: room.Services,
+        Image: room.image,
+      });
+      navigation.navigate('MyBooking');  
+    } catch (error) {
+      console.error("Error booking room: ", error);
+    }
   };
 
   if (isLoading) {
@@ -81,7 +91,7 @@ const RoomsPage = () => {
             
             <TouchableOpacity
               style={styles.bookNowButton}
-              onPress={() => handleBooking(room)}  // Updated to handle booking
+              onPress={() => handleBooking(room)}  // Updated to handle booking using Firestore
             >
               <Text style={styles.bookNowText}>Booking Now</Text>
             </TouchableOpacity>
