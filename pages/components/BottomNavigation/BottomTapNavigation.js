@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AboutUsPage from '../About us/aboutus';
 import { styles } from './BottomNavigation.module';
 import HotelsPage from '../../HotelsPage';
+import Profile from '../../Profile';
 function MyTabs() {
   return (
     <Tab.Navigator initialRouteName={routes.login} screenOptions={{headerShown:false,
@@ -23,6 +24,16 @@ function MyTabs() {
       ),
       tabBarActiveTintColor:"#dfa974"
     }}/>
+      <Tab.Screen name={routes.profile} component={Profile} 
+      
+      options={{
+       tabBarLabel: 'Profile',
+       tabBarIcon: ({  color,size }) => (
+           <Ionicons name="person-outline" color={color} size={size} />
+       ),
+       tabBarActiveTintColor:"#dfa974"
+     }}
+     />
       <Tab.Screen name={routes.hotelsPage} component={HotelsPage} 
       options={{
       tabBarLabel: 'Hotels',
@@ -50,6 +61,7 @@ function MyTabs() {
         tabBarActiveTintColor:"#dfa974"
       }}
       />
+     
     </Tab.Navigator>
   );
 }
