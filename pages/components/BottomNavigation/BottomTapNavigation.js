@@ -16,7 +16,7 @@ function MyTabs() {
         fontWeight:'bold',
       },
     }}>
-      <Tab.Screen name={routes.home} component={Home}   options={{
+      <Tab.Screen name="HomeTap"component={Home}   options={{
       tabBarLabel: 'Home',
      
       tabBarIcon: ({  color,size }) => (
