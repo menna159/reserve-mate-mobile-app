@@ -27,10 +27,10 @@ export function MyStack() {
 
       {/* Home and other pages */}
       <Stack.Screen
-        name={routes.home}
-        component={MyTabs}
-        options={{ headerShown: false }}
-      />
+  name={routes.mainTabs}  
+  component={Home}
+  options={{ headerShown: false }}
+/>
       <Stack.Screen name={routes.hotelsPage} component={HotelsPage} />
       <Stack.Screen name={routes.hotelDetails} component={HotelDetails} />
       <Stack.Screen name={routes.reviews} component={Reviews} />

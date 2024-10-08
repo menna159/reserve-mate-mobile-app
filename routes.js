@@ -1,6 +1,5 @@
- 
-
 export const routes = {
+  mainTabs:"home",
   home: "home",
   login: "login",
   aboutUs: "AboutUs",
