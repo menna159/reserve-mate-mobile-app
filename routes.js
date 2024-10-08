@@ -3,7 +3,7 @@ export const routes = {
   home: "home",
   login: "login",
   aboutUs: "AboutUs",
-  contactUs: "contactUs",
+  contactUs: "Contact Us",
   signup: "Sign Up",
   hotelsPage: "HotelsPage",
   hotelDetails: "HotelDetails",

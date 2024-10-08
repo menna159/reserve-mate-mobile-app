@@ -7,6 +7,7 @@ import AboutUsPage from '../About us/aboutus';
 import { styles } from './BottomNavigation.module';
 import HotelsPage from '../../HotelsPage';
 import Profile from '../../Profile';
+import ContactUsPage from '../../Contact-us/ContactUs';
 function MyTabs() {
   return (
     <Tab.Navigator initialRouteName={routes.login} screenOptions={{headerShown:false,
@@ -43,7 +44,7 @@ function MyTabs() {
       tabBarActiveTintColor:"#dfa974"
     }}
       />
-      <Tab.Screen name={routes.contactUs} component={Home}
+      <Tab.Screen name={routes.contactUs} component={ContactUsPage}
       options={{
         tabBarLabel: 'Contact Us',
         tabBarIcon: ({  color,size }) => (
