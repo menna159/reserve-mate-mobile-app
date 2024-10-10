@@ -11,4 +11,5 @@ export const routes = {
   profile: "Profile",
   roomsPage:"RoomsPage",
   myBooking:'MyBooking',
+  checkOutScreen:"CheckOutScreen"
 };

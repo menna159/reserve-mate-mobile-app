@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, Button, Modal, Alert, TextInput } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native'; // Added useNavigation
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { db } from "../firebase";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Added AsyncStorage
 
 const RoomsPage = () => {
   const route = useRoute();
@@ -17,6 +18,8 @@ const RoomsPage = () => {
     numberOfPersons: 1,
     numberOfChildren: 0,
   });
+  
+  const navigation = useNavigation(); // Added navigation
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -89,14 +92,29 @@ const RoomsPage = () => {
       }
 
       // Proceed with booking if the room is available
+      const bookingData = {
+        ...bookingDetails,
+        roomId: selectedRoomId,
+        hotelId,
+        roomPrice: rooms.find(room => room.id === selectedRoomId).Price,
+      };
+
       await addDoc(collection(db, `hotels/${hotelId}/rooms/${selectedRoomId}/bookings`), {
         arrivalDate: bookingDetails.arrivalDate,
         departureDate: bookingDetails.departureDate,
         numberOfPersons: bookingDetails.numberOfPersons,
         numberOfChildren: bookingDetails.numberOfChildren,
       });
-      Alert.alert("Success", "Booking confirmed!");
+
+      // Store booking data in AsyncStorage (or you could pass it directly through navigation params)
+      await AsyncStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+      // Redirect to checkout page
+      navigation.navigate('CheckOutScreen'); // Ensure this screen is registered in your navigation
+
       setIsModalVisible(false);
+      Alert.alert("Success", "Booking confirmed!");
+
     } catch (error) {
       console.error("Error booking room:", error);
       Alert.alert("Error", "Failed to confirm booking.");
