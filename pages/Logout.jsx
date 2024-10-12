@@ -5,6 +5,7 @@ import { signOut } from "firebase/auth";
 import { Toast, useToast } from "react-native-toast-notifications";
 import { routes } from "../routes";
 import { useNavigation } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 
 const Logout = () => {
   const [loading, setLoading] = useState(false);
@@ -35,21 +36,30 @@ const Logout = () => {
       <TouchableOpacity
         onPress={signOutUser}
         disabled={loading}
-        style={{
-          backgroundColor: loading ? "#ccc" : "#FF5733",
-          padding: 10,
-          borderRadius: 5,
-          alignItems: "center",
-        }}
+        style={styles.btnContainer}
       >
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={{ color: "#fff", fontSize: 16 }}>Log Out</Text>
+          <Text style={styles.btn}>Log Out</Text>
         )}
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  btn: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  btnContainer: {
+    backgroundColor: "#A04747",
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 166,
+  },
+});
 
 export default Logout;

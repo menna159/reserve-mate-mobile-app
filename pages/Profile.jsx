@@ -6,6 +6,7 @@ import ProfilePhoneModal from "./modals/ProfilePhoneModal";
 import ProfileEmailModal from "./modals/ProfileEmailModal";
 import ProfilePasswordModal from "./modals/ProfilePasswordModal";
 import ProfileDeleteModal from "./modals/ProfileDeleteModal";
+import Logout from "./Logout";
 // import AuthGuard from "@/app/components/main-app/ui/auth-guard/AuthGuard";  // Adjust path as necessary
 
 const Profile = () => {
@@ -59,6 +60,7 @@ const Profile = () => {
           currentUser={currentUser}
         />
       </View>
+      <Logout />
     </View>
   );
 };
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "center",
     marginTop: 20,
   },
 });
