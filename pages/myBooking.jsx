@@ -42,7 +42,10 @@ const MyBooking = () => {
       try {
         const bookingsCollection = collection(db, "payments");
         const bookingsSnapshot = await getDocs(bookingsCollection);
-        const data = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const data = bookingsSnapshot.docs.map(doc => {
+          console.log(doc.id, doc.data());  // Log each document
+          return { id: doc.id, ...doc.data() };
+        });
         const userBookings = data.filter((booking) => booking.userId === currentUser.uid);
         const enrichedBookings = await Promise.all(userBookings.map(async (booking) => await fetchRoomAndHotelData(booking)));
         setBookings(enrichedBookings.filter(Boolean));

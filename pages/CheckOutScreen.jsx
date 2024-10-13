@@ -82,29 +82,40 @@ const CheckOutScreen = ({ storedBookingData }) => {
 
   const storeBookingDataToFirestore = async (sessionId) => {
     try {
+      console.log("Storing booking data...");
       const bookingRef = collection(db, `hotels/${bookingData.hotelId}/rooms/${bookingData.roomId}/bookings`);
       const paymentRef = collection(db, 'payments');
-
+  
+      console.log("Booking Reference:", bookingRef);
+      console.log("Payment Reference:", paymentRef);
+  
       await addDoc(bookingRef, {
         ...bookingData,
         status: 'confirmed',
         createdAt: new Date().toISOString(),
       });
-
+      console.log("Booking data stored successfully");
+      const getCurrentDateTime = () => {
+        const now = new Date();
+        const timezoneOffset = now.getTimezoneOffset() * 60000; // Convert offset to milliseconds
+        const localTime = new Date(now.getTime() - timezoneOffset);
+        return localTime.toISOString().slice(0, 19).replace('T', ' '); // Format as 'YYYY-MM-DD HH:MM:SS'
+      };
       await addDoc(paymentRef, {
         roomId: bookingData.roomId,
         hotelId: bookingData.hotelId,
         userId: bookingData.userId,
         sessionId,
         roomPrice: bookingData.roomPrice,
-        createdAt: new Date().toISOString(),
+        createdAt: getCurrentDateTime(),
       });
-
+      console.log("Payment data stored successfully");
+  
     } catch (err) {
-      console.error('Failed to store booking data: ', err.message);
+      console.error("Failed to store booking data: ", err.message);
     }
   };
-
+  
   return (
     <View style={{ padding: 20 }}>
       <Text style={{ fontSize: 22, marginBottom: 20 }}>Payment Information</Text>
