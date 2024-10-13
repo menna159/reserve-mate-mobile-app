@@ -1,120 +1,134 @@
-// // Import necessary libraries and Firebase functions
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, Button, ActivityIndicator, Alert } from 'react-native';
-// import { CardField, useStripe } from '@stripe/stripe-react-native';
-// import { collection, addDoc } from 'firebase/firestore';
-// import {db} from '../firebase';
-// import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, Button, ActivityIndicator, Alert } from 'react-native';
+import { CardField, useStripe } from '@stripe/stripe-react-native';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useNavigation } from '@react-navigation/native';
+import { routes } from '../routes';
+import { AuthContext } from '../AuthContext';
 
-// const CheckOutScreen = () => {
-//   const { confirmPayment } = useStripe();
-//   const [loading, setLoading] = useState(false);
-//   const [cardDetails, setCardDetails] = useState(null);
-//   const [error, setError] = useState(null);
-//   const [bookingData, setBookingData] = useState(null);
-//   const navigation = useNavigation();
+const CheckOutScreen = ({ storedBookingData }) => {
+  const { currentUser } = useContext(AuthContext);
+  const { confirmPayment } = useStripe();
+  const [loading, setLoading] = useState(false);
+  const [cardDetails, setCardDetails] = useState(null);
+  const [error, setError] = useState(null);
+  const [bookingData, setBookingData] = useState(null);
+  const navigation = useNavigation();
 
-//   useEffect(() => {
-//     // Assuming you get booking data from AsyncStorage or navigation params
-//     const storedBookingData = {/* Get data from AsyncStorage or other sources */};
-//     setBookingData(storedBookingData);
-//   }, []);
+  useEffect(() => {
+    if (currentUser && storedBookingData) {
+      setBookingData({ ...storedBookingData, userId: currentUser?.uid });
+    }
+  }, [currentUser, storedBookingData]);
 
-//   const handlePayment = async () => {
-//     if (!cardDetails?.complete) {
-//       Alert.alert('Incomplete card details');
-//       return;
-//     }
+  const handlePayment = async () => {
+    if (!currentUser) {
+      Alert.alert('Error', 'User not logged in');
+      return;
+    }
 
-//     setLoading(true);
+    if (!cardDetails?.complete) {
+      Alert.alert('Incomplete card details');
+      return;
+    }
 
-//     try {
-//       // Create a payment intent directly with Stripe
-//       const response = await fetch('https://api.stripe.com/v1/payment_intents', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/x-www-form-urlencoded',
-//           'Authorization': `Bearer ${process.env.STRIPE_SECRET_KEY}` // Use your secret key here
-//         },
-//         body: new URLSearchParams({
-//           amount: String(bookingData.roomPrice * 100), // in cents
-//           currency: 'usd',
-//           payment_method_types: ['card']
-//         })
-//       });
+    setLoading(true);
+    setError(null); // Clear previous error messages
 
-//       const { client_secret: clientSecret, id: sessionId } = await response.json();
+    try {
+      const response = await fetch('http://192.168.1.48:5000/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: bookingData.roomPrice * 100, // Amount in cents
+        }),
+      });
 
-//       // Confirm the payment on the client side using Stripe SDK
-//       const { error, paymentIntent } = await confirmPayment(clientSecret, {
-//         type: 'Card',
-//         billingDetails: { /* Optional billing details */ },
-//       });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
 
-//       if (error) {
-//         setError(error.message);
-//       } else if (paymentIntent.status === 'Succeeded') {
-//         await storeBookingDataToFirestore(sessionId);
-//         Alert.alert('Payment successful');
-//         navigation.navigate('BookingConfirmation'); // Navigate after payment success
-//       }
+      const { clientSecret, sessionId } = await response.json();
 
-//     } catch (err) {
-//       setError(err.message);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+      // Confirm the payment with the client secret
+      const { error, paymentIntent } = await confirmPayment(clientSecret, {
+        paymentMethodType: 'Card',
+      });
 
-//   const storeBookingDataToFirestore = async (sessionId) => {
-//     try {
-//       const bookingRef = collection(db, `hotels/${bookingData.hotelId}/rooms/${bookingData.roomId}/bookings`);
-//       const paymentRef = collection(db, 'payments');
+      if (error) {
+        console.error('Payment confirmation error:', error);
+        setError(error.message);
+      } else if (paymentIntent?.status === 'Succeeded') {
+        await storeBookingDataToFirestore(sessionId);
+        Alert.alert('Payment successful', '', [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate(routes.myBooking),
+          },
+        ]);
+      }
 
-//       // Store booking data
-//       await addDoc(bookingRef, {
-//         ...bookingData,
-//         status: 'confirmed',
-//         createdAt: new Date().toISOString(),
-//       });
+    } catch (err) {
+      console.error('Payment error:', err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-//       // Store payment data
-//       await addDoc(paymentRef, {
-//         roomId: bookingData.roomId,
-//         hotelId: bookingData.hotelId,
-//         userId: bookingData.userId,
-//         sessionId: sessionId,
-//         roomPrice: bookingData.roomPrice,
-//         createdAt: new Date().toISOString(),
-//       });
+  const storeBookingDataToFirestore = async (sessionId) => {
+    try {
+      const bookingRef = collection(db, `hotels/${bookingData.hotelId}/rooms/${bookingData.roomId}/bookings`);
+      const paymentRef = collection(db, 'payments');
 
-//     } catch (err) {
-//       console.error('Failed to store booking data: ', err.message);
-//     }
-//   };
+      await addDoc(bookingRef, {
+        ...bookingData,
+        status: 'confirmed',
+        createdAt: new Date().toISOString(),
+      });
 
-//   return (
-//     <View style={{ padding: 20 }}>
-//       <Text style={{ fontSize: 22, marginBottom: 20 }}>Payment Information</Text>
+      await addDoc(paymentRef, {
+        roomId: bookingData.roomId,
+        hotelId: bookingData.hotelId,
+        userId: bookingData.userId,
+        sessionId,
+        roomPrice: bookingData.roomPrice,
+        createdAt: new Date().toISOString(),
+      });
 
-//       <CardField
-//         postalCodeEnabled={true}
-//         placeholders={{ number: '4242 4242 4242 4242' }}
-//         cardStyle={{ borderColor: '#ccc', borderWidth: 1, borderRadius: 5 }}
-//         style={{ height: 50, marginVertical: 30 }}
-//         onCardChange={cardDetails => setCardDetails(cardDetails)}
-//       />
+    } catch (err) {
+      console.error('Failed to store booking data: ', err.message);
+    }
+  };
 
-//       {error && <Text style={{ color: 'red' }}>{error}</Text>}
+  return (
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 22, marginBottom: 20 }}>Payment Information</Text>
 
-//       <Button
-//         title={loading ? 'Processing...' : 'Confirm Payment'}
-//         onPress={handlePayment}
-//         disabled={loading}
-//       />
-//       {loading && <ActivityIndicator size="large" />}
-//     </View>
-//   );
-// };
+      <CardField
+        postalCodeEnabled={true}
+        placeholders={{ number: '4242 4242 4242 4242' }}
+        cardStyle={{ borderColor: '#ccc', borderWidth: 1, borderRadius: 5 }}
+        style={{ height: 50, marginVertical: 30 }}
+        onCardChange={(cardDetails) => {
+          setCardDetails(cardDetails);
+        }}
+      />
 
-// export default CheckOutScreen;
+      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+
+      <Button
+        title={loading ? 'Processing...' : 'Confirm Payment'}
+        onPress={handlePayment}
+        disabled={loading}
+      />
+      {loading && <ActivityIndicator size="large" />}
+    </View>
+  );
+};
+
+export default CheckOutScreen;

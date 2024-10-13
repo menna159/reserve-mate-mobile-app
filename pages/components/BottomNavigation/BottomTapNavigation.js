@@ -8,6 +8,7 @@ import { styles } from './BottomNavigation.module';
 import HotelsPage from '../../HotelsPage';
 import Profile from '../../Profile';
 import ContactUsPage from '../../Contact-us/ContactUs';
+import MyBooking from '../../myBooking';
 function MyTabs() {
   return (
     <Tab.Navigator initialRouteName={routes.login} screenOptions={{headerShown:false,
@@ -31,6 +32,16 @@ function MyTabs() {
        tabBarLabel: 'Profile',
        tabBarIcon: ({  color,size }) => (
            <Ionicons name="person-outline" color={color} size={size} />
+       ),
+       tabBarActiveTintColor:"#dfa974"
+     }}
+     />
+     <Tab.Screen name={routes.myBooking} component={MyBooking} 
+      
+      options={{
+       tabBarLabel: 'Bookings',
+       tabBarIcon: ({  color,size }) => (
+           <Ionicons name="calendar-outline" color={color} size={size} />
        ),
        tabBarActiveTintColor:"#dfa974"
      }}

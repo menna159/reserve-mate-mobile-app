@@ -11,7 +11,8 @@ import Reviews from "./Reviews";
 import Profile from "./Profile";
 import RoomsPage from './RoomsPage';
 import MyBooking from "./myBooking";
-// import CheckOutScreen from "./CheckOutScreen";
+import CheckOutScreen from "./CheckOutScreen";
+import PaymentForm from "./paymentForm";
 
 const Stack = createStackNavigator();
 
@@ -39,8 +40,12 @@ export function MyStack() {
       <Stack.Screen name={routes.profile} component={Profile} />
       <Stack.Screen name={routes.roomsPage} component={RoomsPage} />
       <Stack.Screen name={routes.myBooking} component={MyBooking} />
-       {/* <Stack.Screen name={routes.checkOutScreen} component={CheckOutScreen} /> */}
-
+       <Stack.Screen name={routes.checkOutScreen} component={CheckOutScreen} />
+       <Stack.Screen
+        name="paymentForm"
+        component={PaymentForm}
+        options={{ headerShown: false }}
+      />
       
     </Stack.Navigator>
   );

@@ -1,179 +1,193 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, Platform } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from "../firebase"; // Import your Firestore configuration
+import React, { useContext, useEffect, useState } from "react";
+import { View, Text, Image, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import { AuthContext } from "../AuthContext";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";  // Import navigation hook
+import { db } from "../firebase";
+import { Toast } from "react-native-toast-notifications";
+import { routes } from "../routes";
 
 const MyBooking = () => {
-  const [bookings, setBookings] = useState([]); // State for storing booking data
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const { currentUser } = useContext(AuthContext);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const navigation = useNavigation();  // Access the navigation object
+
+  const fetchRoomAndHotelData = async (booking) => {
+    try {
+      const roomDocRef = doc(db, `hotels/${booking.hotelId}/rooms/${booking.roomId}`);
+      const roomDoc = await getDoc(roomDocRef);
+      const hotelDocRef = doc(db, `hotels/${booking.hotelId}`);
+      const hotelDoc = await getDoc(hotelDocRef);
+
+      if (!roomDoc.exists() || !hotelDoc.exists()) {
+        throw new Error("Room or Hotel data not found.");
+      }
+
+      return {
+        ...booking,
+        roomData: roomDoc.data(),
+        hotelName: hotelDoc.data().name,
+      };
+    } catch (error) {
+      console.error("Error fetching room or hotel data:", error);
+      return null;
+    }
+  };
+
+  const fetchData = async () => {
+    if (currentUser) {
+      try {
+        const bookingsCollection = collection(db, "payments");
+        const bookingsSnapshot = await getDocs(bookingsCollection);
+        const data = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const userBookings = data.filter((booking) => booking.userId === currentUser.uid);
+        const enrichedBookings = await Promise.all(userBookings.map(async (booking) => await fetchRoomAndHotelData(booking)));
+        setBookings(enrichedBookings.filter(Boolean));
+        console.log(bookings.map(booking => booking.roomData));
+        
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
-    // Fetch booking data from Firestore
-    const fetchBookings = async () => {
-      try {
-        const bookingsSnapshot = await getDocs(collection(db, 'bookings')); // Adjust 'bookings' to your collection name
-        const bookingsData = bookingsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setBookings(bookingsData);
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    fetchData();
+  }, [currentUser]);
 
-    fetchBookings();
-  }, []);
+  const cancelOrder = async (orderId) => {
+    // try {
+    //   setLoading(true);
+    //   const res = await fetch("/api/deleteOrder", {
+    //     method: "DELETE",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ id: orderId }),
+    //   });
 
-  if (isLoading) {
+    //   if (!res.ok) {
+    //     throw new Error(`Failed to delete order. Server responded with status ${res.status}`);
+    //   }
+
+    //   Toast.show({
+    //     text1: "Success",
+    //     text2: "Reservation deleted successfully",
+    //   });
+
+    //   await fetchData();
+    // } catch (err) {
+    //   console.error("Error deleting order:", err.message);
+    //   setError("Failed to delete order: " + err.message);
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
+
+  if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#dfa974" />
       </View>
     );
   }
 
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "red" }}>Error: {error}</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <View style={styles.scrollWrapper}> {/* Wrapping View to control height and overflow */}
-        <ScrollView 
-          style={styles.scrollView} 
-          contentContainerStyle={styles.scrollContent} 
-          showsVerticalScrollIndicator={true} // Show scroll indicator in web
-        >
-          <Text style={styles.cartHeader}>My Booking</Text>
-          {bookings.length > 0 ? (
-            bookings.map((room, index) => (
-              <View key={index} style={styles.cartItem}>
+    <View style={{ flex: 1, padding: 16 }}>
+      <Text style={{ fontSize: 24, textAlign: "center", marginVertical: 20 }}>My Reservations</Text>
+      <ScrollView>
+        {bookings.length > 0 ? (
+          bookings.map((element, index) => (
+            <View
+              key={index}
+              style={{
+                marginBottom: 16,
+                backgroundColor: "#fff",
+                borderRadius: 8,
+                shadowColor: "#000",
+                shadowOpacity: 0.2,
+                shadowRadius: 6,
+                elevation: 3,
+                overflow: "hidden",
+              }}
+            >
+              <View style={{ flexDirection: "row" }}>
                 <Image
-                  source={{ uri: room.image }}
-                  style={styles.roomImage}
-                  resizeMode="cover"
+                  source={{ uri: element.roomData.image || "/default-image.jpg" }}
+                  style={{ width: 100, height: 100, resizeMode: "cover" }}
                 />
-                <View style={styles.roomDetails}>
-                  <Text style={styles.roomTitle}>{room.Title}</Text>
-                  <Text style={styles.roomPrice}>
-                    {room.Price}$ <Text style={styles.perNight}>/Pernight</Text>
+                <View style={{ flex: 1, padding: 8 }}>
+                  <Text style={{ fontSize: 18 }}>{element.hotelName} hotel</Text>
+                  <Text>{element.roomData.title}</Text>
+                  <Text>
+                    Created at: <Text style={{ color: "gray" }}>{element.createdAt}</Text>
                   </Text>
-                  <View style={styles.roomDetailsContainer}>
-                    <Text style={styles.roomDetailLabel}>Size:</Text>
-                    <Text style={styles.roomDetail}>{room.Size}</Text>
-                  </View>
-                  <View style={styles.roomDetailsContainer}>
-                    <Text style={styles.roomDetailLabel}>Capacity:</Text>
-                    <Text style={styles.roomDetail}>{room.Capacity}</Text>
-                  </View>
-                  <View style={styles.roomDetailsContainer}>
-                    <Text style={styles.roomDetailLabel}>Bed:</Text>
-                    <Text style={styles.roomDetail}>{room.Bed}</Text>
-                  </View>
-                  <View style={styles.roomDetailsContainer}>
-                    <Text style={styles.roomDetailLabel}>Services:</Text>
-                    <Text style={styles.roomDetail}>{room.Services}</Text>
-                  </View>
+                  <Text>
+                    Price: <Text style={{ color: "gray" }}>{element.roomData.Price} $ per night</Text>
+                  </Text>
+                  <Text>
+                    Size: <Text style={{ color: "gray" }}>{element.roomData.Size}</Text>
+                  </Text>
+                  <Text>
+                    Capacity: <Text style={{ color: "gray" }}>{element.roomData.Capacity}</Text>
+                  </Text>
+                  <Text>
+                    Bed: <Text style={{ color: "gray" }}>{element.roomData.Bed}</Text>
+                  </Text>
+                  <Text>
+                    Services: <Text style={{ color: "gray" }}>{element.roomData.Services}</Text>
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "red",
+                      padding: 10,
+                      borderRadius: 5,
+                      alignItems: "center",
+                      marginTop: 8,
+                    }}
+                    onPress={() => cancelOrder(element.docId)}
+                  >
+                    <Text style={{ color: "#fff" }}>Cancel Reservation</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
-            ))
-          ) : (
-            <Text style={styles.noItemsText}>No rooms added to the cart yet.</Text>
-          )}
-        </ScrollView>
-      </View>
+            </View>
+          ))
+        ) : (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 20 }}>
+            <Text style={{ color: "gray" }}>You haven't made any reservations.</Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Button to Navigate to Home */}
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#dfa974",
+          padding: 15,
+          borderRadius: 8,
+          alignItems: "center",
+          marginTop: 20,
+        }}
+        onPress={() => navigation.navigate(routes.home)} // Use navigation to go to 'Home'
+      >
+        <Text style={{ color: "#fff", fontSize: 16 }}>Go to Home</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f9f9f9',
-    alignItems: 'center', // Center the scroll wrapper for web
-    justifyContent: 'center',
-  },
-  scrollWrapper: {
-    width: '100%', // Full width
-    height: '80vh', // Occupy 80% of the viewport height for web
-    maxWidth: 600, // Optional: Set a max-width for better readability
-    overflow: Platform.OS === 'web' ? 'auto' : 'hidden', // Enable scroll for web
-  },
-  scrollView: {
-    flex: 1, // Full height for ScrollView
-  },
-  scrollContent: {
-    padding: 20, // Adjust padding inside ScrollView
-  },
-  cartHeader: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  cartItem: {
-    marginBottom: 30,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    borderColor: '#ebebeb',
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  roomImage: {
-    width: '100%',
-    height: 200,
-  },
-  roomDetails: {
-    padding: 24,
-    borderBottomColor: '#ebebeb',
-    borderBottomWidth: 1,
-  },
-  roomTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#19191a',
-    marginBottom: 17,
-  },
-  roomPrice: {
-    fontSize: 20,
-    color: '#dfa974',
-    fontWeight: '900',
-    marginBottom: 10,
-  },
-  perNight: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#19191a',
-  },
-  roomDetailsContainer: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  roomDetailLabel: {
-    width: 125,
-    fontSize: 18,
-    color: '#707079',
-    lineHeight: 36,
-  },
-  roomDetail: {
-    fontSize: 16,
-    color: '#707079',
-    lineHeight: 30,
-  },
-  noItemsText: {
-    fontSize: 16,
-    color: '#707079',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default MyBooking;

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator, Button, Modal, Alert, TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native'; // Added useNavigation
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import { db } from "../firebase";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Added AsyncStorage
 
+
 const RoomsPage = () => {
+
   const route = useRoute();
   const { hotelId } = route.params;
   const [rooms, setRooms] = useState([]);
@@ -110,7 +112,7 @@ const RoomsPage = () => {
       await AsyncStorage.setItem('bookingData', JSON.stringify(bookingData));
 
       // Redirect to checkout page
-      navigation.navigate('CheckOutScreen'); // Ensure this screen is registered in your navigation
+      navigation.navigate('paymentForm',{reserve:bookingData}); // Ensure this screen is registered in your navigation
 
       setIsModalVisible(false);
       Alert.alert("Success", "Booking confirmed!");
