@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   deleteBtnContainer: {
-    backgroundColor: "red",
+    backgroundColor: "#A04747",
     borderRadius: 5,
     padding: 5,
   },

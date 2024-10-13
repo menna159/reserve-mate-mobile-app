@@ -56,8 +56,7 @@ const Login = ({ navigation }) => {
       },
       pattern: {
         value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/,
-        message:
-          "Password must contain at least one number, one special character, and one uppercase letter!",
+        message: "Invalid Password!",
       },
     });
   }, [register]);
